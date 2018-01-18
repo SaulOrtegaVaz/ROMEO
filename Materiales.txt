@@ -1,0 +1,41 @@
+**** Bateria de 7,4V (x1):
+https://www.banggood.com/es/2S-7_4V-3000mAh-Upgrade-Lipo-Battery-for-Frsky-Taranis-X9D-Plus-Transmitter-p-1147597.html?rmmds=search&cur_warehouse=CN
+
+
+**** Cargador Bateria USB (x1):
+https://www.banggood.com/TP4056-1A-Lipo-Battery-Charging-Board-Charger-Module-Mini-USB-Interface-p-1027027.html?rmmds=search&cur_warehouse=CN
+
+
+**** Conversor de 7,4V a 5V (x4):
+https://www.banggood.com/es/DC-DC-5V-3A-Power-Supply-Module-Buck-Step-Down-Regulator-Module-24V-12V-9V-To-5V-Fixed-Output-p-1177912.html?rmmds=detail-left-hotproducts&cur_warehouse=CN
+
+
+**** ESP8266 NodeMCU Lolin V3 (x3):
+https://www.banggood.com/es/3Pcs-LoLin-V3-NodeMcu-Lua-WIFI-Development-Board-p-1122727.html?rmmds=search&cur_warehouse=CN
+https://es.aliexpress.com/store/product/LoLin-V3-NodeMcu-Lua-CH340G-ESP8266-WIFI-Internet-Development-Board-Module-Free-Shipping/2672017_32768126855.html?spm=a219c.search0104.3.1.4a5c6d18XqwDtn&ws_ab_test=searchweb0_0,searchweb201602_5_10152_10151_10065_10344_10068_10547_10342_10343_10340_10548_10341_10084_10083_10615_10307_10301_10303_10313_10059_10184_10314_10534_100031_10604_10103_10142,searchweb201603_25,ppcSwitch_5&algo_expid=b3d01db6-a139-4e35-824f-6a5f9f0effc9-0&algo_pvid=b3d01db6-a139-4e35-824f-6a5f9f0effc9&priceBeautifyAB=3
+
+
+**** Motores-Rueda:
+https://www.banggood.com/es/Plastic-Tire-Wheel-With-DC-3-6v-Gear-Motor-For-Arduino-Smart-Car-p-997113.html?rmmds=search&cur_warehouse=CN
+
+
+**** Controlador motores:
+https://www.banggood.com/es/L9110S-H-Bridge-Stepper-Motor-Dual-DC-Driver-Controller-Module-p-914880.html?rmmds=search&cur_warehouse=CN
+
+
+**** CONECTORES:
+	
+	** PogoPin (x7H, x7M):
+https://es.aliexpress.com/store/product/4-pin-straight-contact-spring-pin-connector-pogo-pin-intelligent-bracelet-large-current-battery-telescopic-needle/1930082_32478607934.html?spm=a219c.12010612.0.0.c0edec9uuk3BP
+
+	** Imanes (x32):
+https://es.aliexpress.com/store/product/50pcs-neodymium-magnet-20x10x2-mm-N35-Small-Square-power-Strong-magnets-20-10-2mm-Rare-Earth/2852065_32801882422.html?spm=a219c.search0104.3.122.UswnzK&ws_ab_test=searchweb0_0,searchweb201602_2_10152_10151_10065_10344_10068_10547_10342_10343_10340_10548_10341_10084_10083_10615_10307_10301_10303_10059_10184_10314_10534_100031_10604_10103_10142,searchweb201603_25,ppcSwitch_4&algo_expid=036920e2-39d7-45ae-8587-f8cc72d13c62-17&algo_pvid=036920e2-39d7-45ae-8587-f8cc72d13c62&priceBeautifyAB=0
+
+
+**** Tornillos:
+
+	** Sin punta:
+https://es.aliexpress.com/store/product/50pcs-Flange-washer-socket-button-head-screw-M3-M4-M5-M6-304-Stainless-Steel-A2-washer/2942189_32830562873.html?spm=a219c.search0104.3.210.t7ATce&ws_ab_test=searchweb0_0,searchweb201602_2_10152_10151_10065_10344_10068_10547_10342_10343_10340_10548_10341_10084_10083_10615_10307_10301_10303_10059_10184_10314_10534_100031_10604_10103_10142,searchweb201603_25,ppcSwitch_4&algo_expid=8a3c0943-caf1-49db-8104-d07c1baffcb5-30&algo_pvid=8a3c0943-caf1-49db-8104-d07c1baffcb5&priceBeautifyAB=0
+
+	** Con punta:
+https://es.aliexpress.com/store/product/Stainless-steel-304-large-flat-head-self-tapping-screws-umbrella-head-self-tapping-screw-M3-6/1796553_32360862661.html?spm=a219c.search0104.3.169.t7ATce&ws_ab_test=searchweb0_0,searchweb201602_2_10152_10151_10065_10344_10068_10547_10342_10343_10340_10548_10341_10084_10083_10615_10307_10301_10303_10059_10184_10314_10534_100031_10604_10103_10142,searchweb201603_25,ppcSwitch_4&algo_expid=8a3c0943-caf1-49db-8104-d07c1baffcb5-24&algo_pvid=8a3c0943-caf1-49db-8104-d07c1baffcb5&priceBeautifyAB=0
