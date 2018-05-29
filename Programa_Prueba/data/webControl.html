@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Centro control ROMEO</title>
+	<meta charset="utf-8">
+	<link rel="icon" type="image/png" href="./favicon.png" />
+	<style type="text/css">
+		*{padding: 0px;margin: 0px;}
+
+		#titulo1{text-align: center; margin-bottom: 1%; font-size: 300%; font-weight: bold;}
+
+		#titulo2{text-align: center; margin-bottom: 1%; font-size: 200%; font-weight: bold;}
+
+		.sensores{width: 20%; height: 100px; float: left; margin: 2% 0% 2% 0%;}
+		.textoSensores{text-align: center; font-weight: bold; font-size: 110%;margin-top: 10%;}
+		#ladoIzq{margin-left: 15%;}
+		#botonesControl{margin-left: 5%;}
+		#auto{height: 40%; width: 50%; margin-top: 5%; margin-left: 25%; display: block; font-size: 100%;}
+		#parada{height: 40%; width: 50%; margin-top: 1%; margin-left: 25%; display: block;}
+		#ladoDrch{margin-left: 5%;}
+
+		#cajaBotones{clear: left; width: 40%; margin: 1% 0% 1% 30%;}
+		.botones{width: 25%; height: 50px; margin: 1% 0% 1% 0%; text-align: center; font-size: 120%; font-weight: bold;}
+		.imagen{width: 100%; height: 100%;}
+		#avance{margin-left: 37.5%;}
+		#izquierda{margin-left: 20%;}
+		#derecha{margin-left: 10%;}
+		#retroceso{margin-left: 37.5%;}
+		legend {font-weight: bold; font-size: 120%;}
+	</style>
+	<script type="text/javascript">
+		window.onload = function(){
+			document.onkeydown = pulsacionTeclado;
+			cambiosColor("red","black", "red","black");
+		}
+
+		function cambiosColor(colorFondo1, colorletra1, colorFondo2, colorletra2){
+			document.getElementById("textoSensoresIzq").style.color = colorletra1;
+			document.getElementById("ladoIzq").style.background = colorFondo1;
+			document.getElementById("textoSensoresDrch").style.color = colorletra2;
+			document.getElementById("ladoDrch").style.background = colorFondo2;
+		}
+
+		function pulsacionTeclado(elEvento){
+			var evento = window.event || elEvento;
+			switch(evento.keyCode){
+				case 35:
+					document.getElementById("parada").click();
+					break;
+				case 36:
+					document.getElementById("auto").click();
+					break;
+				case 37:
+					document.getElementById("izquierda").click();
+					break;
+				case 38:
+					document.getElementById("avance").click();
+					break;
+				case 39:
+					document.getElementById("derecha").click();
+					break;
+				case 40:
+					document.getElementById("retroceso").click();
+					break;
+				default:
+					break;
+			}
+		}
+	</script>
+</head>
+<body>
+	<div>
+		<h1 id="titulo1">Módulo de control ROMEO</h1>
+		<h2 id="titulo2"> Interfaz de mando</h2>
+		<div class="sensores" id="ladoIzq"><p class="textoSensores" id="textoSensoresIzq">Sensor Izquierda</p></div>
+		<div class="sensores" id="botonesControl">
+			<button type="submit" form="acciones" class="botones" id="auto" name="orden" value="auto0">Control automático</button>
+			<button type="submit" form="acciones" class="botones" id="parada" name="orden" value="parada0">STOP</button>
+		</div>
+		<div class="sensores" id="ladoDrch"><p class="textoSensores" id="textoSensoresDrch">Sensor Derecha</p></div>
+		<div id="cajaBotones">
+			<form method="GET" action="" id="acciones">
+				<fieldset>
+					<legend>Controles manuales:</legend>
+					<button type="submit" class="botones" id="avance" name="orden" value="avance0">Avance</button>
+					<br>
+					<button type="submit" class="botones" id="izquierda" name="orden" value="izquierda0">Izquierda</button>
+					<button type="submit" class="botones" id="derecha" name="orden" value="derecha0">Derecha</button>
+					<br>
+					<button type="submit" class="botones" id="retroceso" name="orden" value="retroceso0">Retroceso</button>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
