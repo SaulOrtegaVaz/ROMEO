@@ -1,4 +1,5 @@
-/* 
+/*
+ Prueba de echo 
  //WiFi.begin(ssid.c_str(), pass.c_str());
  Redex = Red WiFi externa Control<->PC
  Redin = Red WiFi interna Control<->Comunicacion
