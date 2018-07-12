@@ -2,5 +2,13 @@
     "terminal.integrated.env.windows": {
         "PATH": "C:\\Users\\francisco.moya\\.platformio\\penv\\Scripts;C:\\Users\\francisco.moya\\.platformio\\penv;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\PDFtk\\bin\\;C:\\Program Files\\dotnet\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\AutoFirma\\AutoFirma;C:\\Program Files\\Calibre2\\;G:\\FastBuild\\dist_v0.95\\Bin\\Windows-x64;C:\\Program Files\\Common Files\\Autodesk Shared\\;C:\\Users\\francisco.moya\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\francisco.moya\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\francisco.moya\\AppData\\Local\\Microsoft\\WindowsApps;;G:\\Microsoft VS Code\\bin;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\PDFtk\\bin\\;C:\\Program Files\\dotnet\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\AutoFirma\\AutoFirma;C:\\Program Files\\Calibre2\\;G:\\FastBuild\\dist_v0.95\\Bin\\Windows-x64;C:\\Program Files\\Common Files\\Autodesk Shared\\;C:\\Users\\francisco.moya\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\francisco.moya\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\francisco.moya\\AppData\\Local\\Microsoft\\WindowsApps;;G:\\Microsoft VS Code\\bin",
         "PLATFORMIO_CALLER": "vscode"
+    },
+    "files.associations": {
+        "initializer_list": "cpp",
+        "list": "cpp",
+        "vector": "cpp",
+        "xhash": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
     }
 }

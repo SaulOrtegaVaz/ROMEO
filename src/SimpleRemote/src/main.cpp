@@ -1,14 +1,25 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "server.hh"
+#include "client.hh"
+
+struct SimpleProto {
+    static void run(WiFiClient& client) {
+        if (!client.available()) return;
+        String cmd = client.readStringUntil('\n');
+        Serial.println(cmd);
+    }
+};
+
+using ROMEOModule = ROMEOClient<SimpleProto>;
+//using ROMEOModule = ROMEOServer<SimpleProto>;
+
+ROMEOModule module;
 
 void setup() {
     Serial.begin(115200);
 }
 
-ROMEOServer server;
-
 void loop() {
-    server.run();
-    delay(2000);
+    module.run();
 }

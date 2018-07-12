@@ -1,43 +1,62 @@
 #ifndef SERVER_HH
 #define SERVER_HH
 
-#include "ap-setup.hh"
-#include "client.hh"
+#include <ESP8266WiFi.h>
 
+template<class Protocol>
 class ROMEOServer {
 public:
-    ROMEOServer() : _server(80), _state(State::MissingAP) {}
+    ROMEOServer() : _state(State::MissingAP), _server(80) {}
 
-    bool run() {
+    void run() {
         switch(_state) {
         case State::MissingAP:
-            if (_ap.run())
-                _state = State::Associated;
+            if (WiFi.softAP("Control", "12345678"))
+                _state = State::SoftAP;
             break;
-        case State::Associated:
+        case State::SoftAP:
             _server.begin();
             _state = State::Listening;
             break;
         case State::Listening:
+            checkNewClient();
+            runClients();
             break;
-        } 
-        return _state == State::Listening;      
+        }
     }
 
-    ROMEOClient available() {
-        return ROMEOClient(_server.available());
+private:
+    void checkNewClient() {
+        WiFiClient client = _server.available();
+        if (client)
+            addNewClient(client);
+    }
+
+    void runClients() {
+        for (WiFiClient& client: _clients)
+            if (client) 
+                Protocol::run(client);
+    }
+
+    bool addNewClient(const WiFiClient& newClient) {
+        for (WiFiClient& client: _clients)
+            if (!client) {
+                client = newClient;
+                return true;
+            }
+        return false;
     }
 
 private:
     enum class State {
         MissingAP,
-        Associated,
+        SoftAP,
         Listening,
     };
 
-    APSetup _ap;
-    WiFiServer _server;
     State _state;
+    WiFiServer _server;
+    WiFiClient _clients[5];
 };
 
 #endif
