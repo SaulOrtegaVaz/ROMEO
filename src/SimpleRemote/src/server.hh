@@ -35,7 +35,7 @@ private:
     void runClients() {
         for (WiFiClient& client: _clients)
             if (client) 
-                Protocol::run(client);
+                Protocol::run(client, _server);
     }
 
     bool addNewClient(const WiFiClient& newClient) {
