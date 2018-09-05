@@ -3,7 +3,7 @@
 
 #include <ESP8266WiFi.h>
 
-template<class Protocol>
+template <class Protocol>
 class ROMEOServer {
 public:
     ROMEOServer() : _state(State::MissingAP), _server(80) {}
@@ -11,8 +11,7 @@ public:
     void run() {
         switch(_state) {
         case State::MissingAP:
-            if (WiFi.softAP("Control", "12345678"))
-                _state = State::SoftAP;
+            if (WiFi.softAP("Control", "12345678")) _state = State::SoftAP;
             break;
         case State::SoftAP:
             _server.begin();
@@ -28,14 +27,7 @@ public:
 private:
     void checkNewClient() {
         WiFiClient client = _server.available();
-        if (client)
-            addNewClient(client);
-    }
-
-    void runClients() {
-        for (WiFiClient& client: _clients)
-            if (client) 
-                Protocol::run(client, _server);
+        if (client) addNewClient(client);
     }
 
     bool addNewClient(const WiFiClient& newClient) {
@@ -45,6 +37,12 @@ private:
                 return true;
             }
         return false;
+    }
+
+    void runClients() {
+        for (WiFiClient& client: _clients){
+            if (client) Protocol::run(client, _server);
+        }
     }
 
 private:
