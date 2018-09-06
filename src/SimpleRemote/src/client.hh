@@ -1,13 +1,16 @@
 #ifndef CLIENT_HH
 #define CLIENT_HH
+/*
+Implementa la máquina de estados de los clientes. 
+Mantiene una conexión persistente. 
+Delega la comunicacion en un protocolo.
+*/
 
 #include <ESP8266WiFi.h>
 
 template <class Protocol>
 class ROMEOClient {
 public:
-    ROMEOClient() : _state(State::Disconnected) {}
-
     void run() {
         switch(_state) {
         case State::Disconnected:
@@ -16,16 +19,18 @@ public:
             _state = State::Waiting;
             break;
         case State::Waiting:
-            if (WiFi.status() == WL_CONNECTED) _state = State::Associated;
+            if (WiFi.status() == WL_CONNECTED)
+                _state = State::Associated;
             break;
         case State::Associated:
             if (checkAssociated()) {
                 _client.connect(IPAddress(192,168,4,1), 80);
-                if (_client) _state = State::Connected;
+                if (_client) 
+                    _state = State::Connected;
             }
             break;
         case State::Connected:
-            if (checkAssociated() && checkConnected() && _client.available()) 
+            if (checkAssociated() && checkConnected() && _client.available())
                 Protocol::run(_client);
             break;
         }
@@ -33,7 +38,8 @@ public:
 
 private:
     bool checkAssociated() {
-        if (WiFi.status() == WL_CONNECTED) return true;
+        if (WiFi.status() == WL_CONNECTED) 
+            return true;
         _state = State::Disconnected;
         return false;
     }
