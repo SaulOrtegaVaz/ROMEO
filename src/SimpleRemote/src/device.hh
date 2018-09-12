@@ -15,11 +15,11 @@
 /*
 W 0 1 3 0.5  Escribe en el dispositivo 3 del módulo 1 un 0.5. Lo pide el módulo 0
 R 1 2 0 Lee el dispositivo 0 del módulo 2.  Lo pide el módulo 1
-V 2 1 0 0.534  Responde a lectura informando del valor del dispositivo 0 del módulo 2. Se lo envía al 1
+N 2 1 0 0.534  Responde a lectura informando del valor del dispositivo 0 del módulo 2. Se lo envía al 1
 */
 
 struct Element {
-    virtual void setup(uint8_t pin) {}
+    virtual ~Element() {}
     virtual void read(WiFiClient& client, const char** argv) {}
     virtual void write(WiFiClient& client, const char** argv) {}
 protected:
@@ -33,14 +33,18 @@ struct ROMEODevice {
         for (auto& e: _e) e = static_cast<Element*>(nullptr);
     }
 
-    ROMEODevice(const char* id, const char* cfg) : ROMEODevice() { 
-        configure(id, cfg); 
+    ROMEODevice(const char* id, const char* cfg) : ROMEODevice(id) { 
+        configure(cfg); 
     }
 
-    void configure(const char* id, const char* cfg);
     void runCmd(WiFiClient& client, const char* argv[]);
+    void runCmd(WiFiClient& client, char* cmdline, size_t n);
+
 private:
-    Element* _e[10];
+    void configure(const char* cfg);
+
+private:
+    Element* _e[8];
     const char* _id;
 };
 

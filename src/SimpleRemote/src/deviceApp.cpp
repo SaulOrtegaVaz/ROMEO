@@ -8,20 +8,13 @@
 #include "client.hh"
 #include "device.hh"
 
-ROMEODevice device("com", "M.D.");
+ROMEODevice device("com", "D34D68");
 
 struct ClientProto { // Parse command, dispatch to device
     static void run(WiFiClient& client) {
         char cmdline[128];
-        char *p;
         size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
-        if (n < 1) return;
-        const char* argv[4] = { nullptr };
-        for (uint8_t i = 0; i < 4; ++i) {
-            argv[i] = strtok_r(i? nullptr: cmdline, " \t\r\n", &p);
-            if (argv[i] == nullptr) break;
-        }
-        device.runCmd(client, argv);
+        device.runCmd(client, cmdline, n);
     }
 };
 

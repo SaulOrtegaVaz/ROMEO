@@ -3,42 +3,44 @@
 
 class DistanceSensorElement: public Element {
 public:
-    virtual void setup(uint8_t pin) override {
-        pinMode(pin, OUTPUT);
-        pinMode(pin + 1, INPUT);
-        digitalWrite(pin, LOW);
+    DistanceSensorElement(uint8_t out, uint8_t in)
+    : _out(out), _in(in) {
+        pinMode(_out, OUTPUT);
+        pinMode(_in, INPUT);
+        digitalWrite(_out, LOW);
     }
+
     void read(WiFiClient& client, const char** argv) override {
-        uint8_t pin = atoi(argv[2]);
-        digitalWrite(pin, HIGH); delayMicroseconds(10); digitalWrite(pin, LOW);
-        unsigned t = pulseIn(pin + 1, HIGH) / 59L;
+        digitalWrite(_out, HIGH); delayMicroseconds(10); digitalWrite(_out, LOW);
+        unsigned t = pulseIn(_in, HIGH) / 59L;
         char val[16];
         snprintf(val, sizeof(val), "%u", t);
         const char* args[] = {argv[1], argv[0], argv[2], val, nullptr};
         notify(client, &args[0]);
     }
 
-    void write(WiFiClient& client, const char** argv) override {}
+private:
+    uint8_t _out, _in;
 };
 
 class MotorElement: public Element {
 public:
-    virtual void setup(uint8_t pin) override {
-        pinMode(pin, OUTPUT);
-        pinMode(pin + 1, OUTPUT);
-        digitalWrite(pin, LOW);
-        digitalWrite(pin + 1, LOW);
-    }
-
-    void read(WiFiClient& client, const char** argv) override {
+    MotorElement(uint8_t out, uint8_t dir)
+    : _out(out), _dir(dir) {
+        pinMode(_out, OUTPUT);
+        pinMode(_dir, OUTPUT);
+        digitalWrite(_out, LOW);
+        digitalWrite(_dir, LOW);
     }
 
     void write(WiFiClient& client, const char** argv) override {
-        uint8_t pin = atoi(argv[2]);
         uint8_t v = atoi(argv[3]);
-        digitalWrite(pin, v & 1);
-        digitalWrite(pin + 1, v >> 1);
+        digitalWrite(_out, v & 1);
+        digitalWrite(_dir, v >> 1);
     }
+
+private:
+    uint8_t _out, _dir;
 };
 
   
@@ -57,27 +59,45 @@ ROMEODevice::runCmd(WiFiClient& client, const char** argv)
 }
 
 void 
+ROMEODevice::runCmd(WiFiClient& client, char* cmdline, size_t n)
+{
+    char *p;
+    if (n < 1) return;
+    const char* argv[4] = { nullptr };
+    for (uint8_t i = 0; i < 4; ++i) {
+        argv[i] = strtok_r(i? nullptr: cmdline, " \t\r\n", &p);
+        if (argv[i] == nullptr) break;
+    }
+    runCmd(client, argv);
+}
+
+void 
 Element::notify(WiFiClient& client, const char** argv) {
     char buf[128];
-    size_t n = snprintf(buf, sizeof(buf), "V %s %s %s %s", 
+    size_t n = snprintf(buf, sizeof(buf), "N %s %s %s %s", 
                         argv[0], argv[1], argv[2], argv[3]);
     client.write(buf, n);
 }
 
 
 void 
-ROMEODevice::configure(const char* id, const char* cfg)
+ROMEODevice::configure(const char* cfg)
 {
-    static DistanceSensorElement DistanceSensor;
-    static MotorElement Motor;
-    static MotorElement Element;
+    static uint8_t pin_D[] = { // pins assigned to D0..D8
+        16, 5, 4, 0, 2, 14, 12, 13, 15
+    };
 
-    _id = id;
-    for (uint8_t i = 0; i < sizeof(_e)/sizeof(_e[0]); ++i) {
-        if (cfg[i] == '\0') return;
-        else if (cfg[i] == 'M') _e[i] = &Motor;
-        else if (cfg[i] == 'D') _e[i] = &DistanceSensor;
-        else _e[i] = &Element;
-        _e[i]->setup(i);
+    for (auto& e: _e) 
+        if (e != nullptr) {
+            delete e;
+            e = static_cast<Element*>(nullptr);
+        }
+
+    int n = 0;
+    for (const char* p = cfg; *p != '\0'; p+=3) {
+        uint8_t a = pin_D[p[1] - '0'];
+        uint8_t b = pin_D[p[2] - '0'];
+        if (p[0] == 'M') _e[n++] = new MotorElement(a,b);
+        else if (p[0] == 'D') _e[n++] = new DistanceSensorElement(a,b);
     }
 }

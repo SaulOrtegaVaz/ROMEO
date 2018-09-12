@@ -5,6 +5,9 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "server.hh"
+#include "device.hh"
+
+ROMEODevice device("ctrl", "M45");
 
 struct ControlProto { // Relays commands to clients
     static void run(WiFiClient& client, WiFiServer& server) {
@@ -12,6 +15,7 @@ struct ControlProto { // Relays commands to clients
         size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
         if (n > 2) // message not empty
             server.write(cmdline, n); // Send to all
+        device.runCmd(client, cmdline, n);
     }
 };
 
