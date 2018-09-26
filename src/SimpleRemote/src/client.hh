@@ -11,42 +11,45 @@ Delega la comunicacion en un protocolo.
 template <class Protocol>
 class ROMEOClient {
 public:
+    ROMEOClient() : _state(State::Disconnected) {}
+
     void run() {
         switch(_state) {
         case State::Disconnected:
-            WiFi.mode(WIFI_STA);
-            WiFi.begin("Control", "12345678");
+            WiFi.mode(WIFI_STA); // Activa el modo station Wi-Fi
+            WiFi.begin("Control", "12345678"); // Se conecta a la red Wi-Fi señalada
             _state = State::Waiting;
             break;
         case State::Waiting:
-            if (WiFi.status() == WL_CONNECTED)
+            if (WiFi.status() == WL_CONNECTED) // Si está conectado a la red Wi-Fi
                 _state = State::Associated;
             break;
         case State::Associated:
-            if (checkAssociated()) {
+            if (checkAssociated()) { // Si permanece conectado a la red Wi-Fi
                 _client.connect(IPAddress(192,168,4,1), 80);
-                if (_client) 
+                if (_client) // Si está conectado al servidor
                     _state = State::Connected;
             }
             break;
         case State::Connected:
+            // Si está asociado a la red Wi-Fi, si está conectado al servidor y si hay datos disponibles
             if (checkAssociated() && checkConnected() && _client.available())
-                Protocol::run(_client);
+                Protocol::run(_client); // Aplica protocolo
             break;
         }
     }
 
 private:
-    bool checkAssociated() {
+    bool checkAssociated() { // Comprueba conexión a red Wi-Fi
         if (WiFi.status() == WL_CONNECTED) 
             return true;
-        _state = State::Disconnected;
+        _state = State::Disconnected; // Si no, vuelve a estado disconnected
         return false;
     }
 
-    bool checkConnected() {
+    bool checkConnected() { // Comprueba conexión al servidor
         if (_client) return true;
-        _state = State::Associated;
+        _state = State::Associated; // Si no, vuelve a estado associated
         return false;
     }
 

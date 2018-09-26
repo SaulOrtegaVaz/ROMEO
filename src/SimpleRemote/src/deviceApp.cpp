@@ -1,20 +1,25 @@
-#include <Arduino.h>
 #ifndef DEVICE_APP
-#warning No se genera la aplicación del dispositivo, define DEVICE_APP en platformio.ini para generarla
+#warning No se genera la aplicacion del dispositivo, define DEVICE_APP en platformio.ini para generarla
 #else
 
+/*
+    Main del cliente, modulo de comunicacion o comunicacion
+*/
+
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "server.hh"
 #include "client.hh"
 #include "device.hh"
 
-ROMEODevice device("com", "D34D68");
+// Definicion de elements conectados al modulo de comunicacion
+ROMEODevice device("com", "M12");
 
-struct ClientProto { // Parse command, dispatch to device
+// Protocolo en cliente (comunicacion)
+struct ClientProto { // Recibe los mensajes
     static void run(WiFiClient& client) {
-        char cmdline[128];
+        char cmdline[128]; // Mensaje recibido
         size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
-        device.runCmd(client, cmdline, n);
+        device.runCmd(client, cmdline, n); // Activación del protocolo
     }
 };
 
