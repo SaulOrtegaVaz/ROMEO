@@ -30,6 +30,12 @@ public:
         }
     }
 
+    void write(char* buf, size_t n){ // Escritura de datos a todos los clientes
+        for(WiFiClient& client: _clients){
+            client.write(buf, n);
+        }
+    }
+
 private:
     void checkNewClient() { // Comprueba si hay nuevos clientes
         WiFiClient client = _server.available();

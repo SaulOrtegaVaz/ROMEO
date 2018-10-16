@@ -32,8 +32,8 @@ public:
         unsigned t = pulseIn(_in, HIGH) / 59L;
         char val[16];
         snprintf(val, sizeof(val), "%u", t);
-        const char* args[] = {argv[0], argv[1], argv[2], val, nullptr};
-        notify(client, &args[0]);
+        const char* args[] = {argv[0], argv[1], argv[2], val};
+        notify(client, args);
     }
 
 private:

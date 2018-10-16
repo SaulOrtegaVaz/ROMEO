@@ -41,8 +41,7 @@ public:
 
 private:
     bool checkAssociated() { // Comprueba conexión a red Wi-Fi
-        if (WiFi.status() == WL_CONNECTED) 
-            return true;
+        if (WiFi.status() == WL_CONNECTED) return true;
         _state = State::Disconnected; // Si no, vuelve a estado disconnected
         return false;
     }
