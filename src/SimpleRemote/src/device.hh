@@ -2,6 +2,7 @@
 #define DEVICE_HH
 
 #include <ESP8266WiFi.h>
+#include <functional>
 
 /*
 ROMEODevice = modulo del robot (control, comunicacion, ... etc)
@@ -30,11 +31,11 @@ Ejemplo: [sensor1,sensor2,sensor3 ....]
 struct Element {
 public:
     Element(const char* id) : _id(id) {}
+    Element(const char* fmt, unsigned char index);
     virtual ~Element() {}
     virtual void read(WiFiClient& client, const char** argv) {} // Op. de lectura de datos
     virtual void write(WiFiClient& client, const char** argv) {} // OP. de escritura de datos
     void notify(WiFiClient& client, const char** argv); // Op. de aviso y aviso de lectura
-    bool idcmp(const char* id); // Compara el id del elemento con el id pasado en parametro
     const char* elementID(); // Devuelve el id del elemento
 
 protected:

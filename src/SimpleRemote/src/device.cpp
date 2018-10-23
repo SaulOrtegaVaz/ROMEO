@@ -1,19 +1,20 @@
 #include "device.hh"
 #include <ESP8266WiFi.h>
 
+Element::Element(const char* fmt, unsigned char index)
+{
+    char buf[16];
+    snprintf(buf, sizeof(buf), fmt, index);
+    _id = strdup(buf);
+}
+
 const char* 
 Element::elementID(){ return _id; }
-
-bool 
-Element::idcmp(const char* id){
-    if (!strcmp(elementID(), id)) return true;
-    return false;
-}
 
 void 
 Element::notify(WiFiClient& client, const char** argv) {
     char buf[128];
-    size_t n = snprintf(buf, sizeof(buf), "N %s %s %s %s", 
+    size_t n = snprintf(buf, sizeof(buf), "N %s %s %s %s\r\n", 
                         argv[1], argv[0], argv[2], argv[3]);
     client.write(buf, n);
 }
@@ -21,7 +22,7 @@ Element::notify(WiFiClient& client, const char** argv) {
 class DistanceSensorElement: public Element {
 public:
     DistanceSensorElement(int index, uint8_t out, uint8_t in)
-    : Element("distanceSensor"+index), _out(out), _in(in) {
+    : Element("distance%d", index), _out(out), _in(in) {
         pinMode(_out, OUTPUT);
         pinMode(_in, INPUT);
         digitalWrite(_out, LOW);
@@ -43,7 +44,7 @@ private:
 class MotorElement: public Element {
 public:
     MotorElement(int index, uint8_t out, uint8_t dir)
-    : Element("motor"+index), _out(out), _dir(dir) {
+    : Element("motor%d", index), _out(out), _dir(dir) {
         pinMode(_out, OUTPUT);
         pinMode(_dir, OUTPUT);
         digitalWrite(_out, LOW);
@@ -60,7 +61,9 @@ private:
     uint8_t _out, _dir;
 };
 
-  
+static void get_destination_elements(const char* dest[], char* elstring);
+static bool is_destination_element(const char* id, const char** dest);
+
 void 
 ROMEODevice::runCmd(WiFiClient& client, const char** argv)
 {
@@ -68,53 +71,62 @@ ROMEODevice::runCmd(WiFiClient& client, const char** argv)
     if (0 != strcmp(argv[2], _id)) return;
 
     // Encuentra los elementos de destino en el mensaje
-    const char* elements[3] = { nullptr }; // lista de elementos destino
-    char *elstring = (char*) argv[3];
+    const char* dest[4] = { nullptr }; // lista de elementos destino
+    get_destination_elements(dest, (char*)argv[3]);
+
+    auto dispatchCommand = [&](const char* cmd, std::function<void(Element*, const char**argv)> func) {
+        if (strcmp(cmd, argv[0])) return;
+        for(auto& e: _e) {
+            if (e == nullptr) break;
+            const char* id = e->elementID();
+            if (is_destination_element(id, dest)) {
+                func(e, argv);
+            }
+        }
+    };
+
+    dispatchCommand("R", [&](Element* e, const char**argv) {
+        argv[3] = e->elementID();
+        Serial.println("Read from:");
+        Serial.println(argv[3]);
+        e->read(client, argv+1);
+    });
+
+    dispatchCommand("W", [&](Element* e, const char**argv) {
+        argv[3] = e->elementID();
+        Serial.println("Write to:");
+        Serial.println(argv[3]);
+        e->write(client, argv+1);
+    });
+
+    dispatchCommand("L", [&](Element* e, const char**argv) {
+        Serial.println("List elements:");
+        Serial.println(e->elementID());
+    });
+}
+
+static void
+get_destination_elements(const char* dest[], char* elstring)
+{
+    if (elstring == nullptr || elstring[0] == '\0') return;
     char *p;
     uint8_t i = 0;
-    do{
-        elements[i] = strtok_r(i? nullptr: elstring, ",\t\r\n", &p);
+    do {
+        dest[i] = strtok_r(i? nullptr: elstring, ",", &p);
         i++;
-    }while(elements[i] != nullptr);
+    } while(dest[i] != nullptr);
+}
 
-    // Para cada elemento de destino ejecutar la operacion pedida
-    i = 0;
-
-    if (!strcmp("R", argv[0])) {
-        for(auto& e: _e) {
-            if (e == nullptr) return;
-            else if (e->idcmp(elements[i])) {
-                //const char* args[] = {argv[1], argv[2], e->elementID(), argv[4]};
-                argv[3] = e->elementID();
-                e->read(client, argv+1);
-                i++;
-            }
-        }
+static bool
+is_destination_element(const char* id, const char** dest)
+{
+    if (*dest == nullptr) 
+        return true;
+    for (;*dest != nullptr; ++dest) {
+        if (0 == strcmp(id, *dest)) 
+            return true;
     }
-
-    if (!strcmp("W", argv[0])) {
-        for(auto& e: _e) {
-            if (e == nullptr) return;
-            else if (e->idcmp(elements[i])) {
-                //const char* args[] = {argv[1], argv[2], e->elementID(), argv[4]};
-                argv[3] = e->elementID();
-                e->write(client, argv+1);
-                i++;
-            }
-        }
-    }
-
-    if (!strcmp("N", argv[0])) {
-        for(auto& e: _e) {
-            if (e == nullptr) return;
-            else {
-                argv[4] = e->elementID();
-                argv[3] = "NO_ELEMENT";
-                const char* args[] = {argv[1], argv[2], argv[3], argv[4]};
-                e->notify(client, args);
-            }
-        }
-    }
+    return false;
 }
 
 void 
@@ -122,11 +134,24 @@ ROMEODevice::runCmd(WiFiClient& client, char* cmdline, size_t n)
 {
     char *p;
     if (n < 1) return;
+    cmdline[n] = '\0';
     const char* argv[5] = { nullptr };
     for (uint8_t i = 0; i < 5; ++i) {
         argv[i] = strtok_r(i? nullptr: cmdline, " \t\r\n", &p);
         if (argv[i] == nullptr) break;
     }
+
+    auto x = [](const char*p) { return p == nullptr? "null": p; };
+    char buf[80];
+    sprintf(buf, "[%s][%s][%s][%s][%s]", 
+            x(argv[0]),
+            x(argv[1]),
+            x(argv[2]),
+            x(argv[3]),
+            x(argv[4])
+        );
+    Serial.println(buf);
+
     runCmd(client, argv);
 }
 

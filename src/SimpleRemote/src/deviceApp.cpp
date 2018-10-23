@@ -19,6 +19,7 @@ struct ClientProto { // Recibe los mensajes
     static void run(WiFiClient& client) {
         char cmdline[128]; // Mensaje recibido
         size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
+        Serial.println(cmdline);
         device.runCmd(client, cmdline, n); // Activación del protocolo
     }
 };
