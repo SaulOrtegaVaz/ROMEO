@@ -141,6 +141,7 @@ ROMEODevice::runCmd(WiFiClient& client, char* cmdline, size_t n)
         if (argv[i] == nullptr) break;
     }
 
+#if 0
     auto x = [](const char*p) { return p == nullptr? "null": p; };
     char buf[80];
     sprintf(buf, "[%s][%s][%s][%s][%s]", 
@@ -151,6 +152,7 @@ ROMEODevice::runCmd(WiFiClient& client, char* cmdline, size_t n)
             x(argv[4])
         );
     Serial.println(buf);
+#endif
 
     runCmd(client, argv);
 }
