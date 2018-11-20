@@ -39,22 +39,22 @@ public:
 private:
     void checkNewClient() { // Comprueba si hay nuevos clientes
         WiFiClient client = _server.available();
-        if (client)
-            addNewClient(client);
+        if (client) addNewClient(client);
     }
 
     void runClients() { // Aplica el protocolo en todos los clientes del registro
-        for (WiFiClient& client: _clients)
-            if (client && client.available()) 
-                Protocol::run(client, _server);
+        for (WiFiClient& client: _clients){
+            if (client && client.available()) Protocol::run(client, _server);
+        }
     }
 
     bool addNewClient(const WiFiClient& newClient) { // Añade el nuevo cliente al registro
-        for (WiFiClient& client: _clients)
+        for (WiFiClient& client: _clients){
             if (!client) {
                 client = newClient;
                 return true;
             }
+        }
         return false;
     }
 

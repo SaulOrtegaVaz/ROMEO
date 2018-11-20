@@ -16,15 +16,6 @@ ROMEODevice device("control", "M12");
 
 // Protocolo en servidor (control)
 struct ControlProto { // Reenvia a todos los clientes las ordenes (Relays commands to clients)
-    /*static void run(WiFiClient& client, WiFiServer& server) {
-        char cmdline[128]; // Mensaje recibido
-        size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
-        Serial.print("Comando recibido: ");
-        Serial.println(cmdline);
-        if (n > 2) // Si mensaje no está vacio
-            module.write(cmdline, n); // Envio a todos los clientes (Send to all)
-        //device.runCmd(client, cmdline, n); // Activación del protocolo
-    }*/
     static void run(WiFiClient& client, WiFiServer& server);
 };
 
