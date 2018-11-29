@@ -12,7 +12,7 @@
 #include "device.hh"
 
 // Definicion de elements conectados al modulo de comunicacion
-ROMEODevice device("com", "M12");
+ROMEODevice device("com", "D12D78");
 
 // Protocolo en cliente (comunicacion)
 struct ClientProto { // Recibe los mensajes
@@ -28,6 +28,8 @@ ROMEOModule module;
 
 void setup() {
     Serial.begin(115200);
+    pinMode(2, OUTPUT);
+    digitalWrite(2, LOW);
 }
 
 void loop() {

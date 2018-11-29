@@ -21,11 +21,13 @@ public:
             _state = State::Waiting;
             break;
         case State::Waiting:
-            if (WiFi.status() == WL_CONNECTED) // Si está conectado a la red Wi-Fi
+            if (WiFi.status() == WL_CONNECTED) { // Si está conectado a la red Wi-Fi
                 _state = State::Associated;
+            }
             break;
         case State::Associated:
             if (checkAssociated()) { // Si permanece conectado a la red Wi-Fi
+                digitalWrite(2, HIGH); // Led On <-> Asociado a AP
                 _client.connect(IPAddress(192,168,4,1), 80);
                 if (_client) // Si está conectado al servidor
                     _state = State::Connected;
@@ -33,8 +35,9 @@ public:
             break;
         case State::Connected:
             // Si está asociado a la red Wi-Fi, si está conectado al servidor y si hay datos disponibles
-            if (checkAssociated() && checkConnected() && _client.available())
+            if (checkAssociated() && checkConnected() && _client.available()) {
                 Protocol::run(_client); // Aplica protocolo
+            }
             break;
         }
     }
@@ -42,6 +45,7 @@ public:
 private:
     bool checkAssociated() { // Comprueba conexión a red Wi-Fi
         if (WiFi.status() == WL_CONNECTED) return true;
+        digitalWrite(2, LOW); // Led Off <-> Desconectado del AP
         _state = State::Disconnected; // Si no, vuelve a estado disconnected
         return false;
     }

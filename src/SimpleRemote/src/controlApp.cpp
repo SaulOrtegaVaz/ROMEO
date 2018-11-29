@@ -12,7 +12,7 @@
 #include "device.hh"
 
 // Definicion de elements conectados al modulo de control
-ROMEODevice device("control", "M12");
+ROMEODevice device("control", "M12M32");
 
 // Protocolo en servidor (control)
 struct ControlProto { // Reenvia a todos los clientes las ordenes (Relays commands to clients)
@@ -25,10 +25,8 @@ ROMEOModule module;
 void ControlProto::run(WiFiClient& client, WiFiServer& server) {
     char cmdline[128]; // Mensaje recibido
     size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
-    if (n > 2) { // Si mensaje no está vacio
-        module.write(cmdline, n); // Envio a todos los clientes (Send to all)
-        module.write("\r\n", 2);
-    }
+    module.write(cmdline, n); // Envio a todos los clientes del mensaje (Send to all)
+    module.write("\r\n", 2);
     device.runCmd(client, cmdline, n); // Activación del protocolo
 }
 
