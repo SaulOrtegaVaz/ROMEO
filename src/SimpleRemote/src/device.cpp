@@ -70,7 +70,7 @@ public:
 
     void write(WiFiClient& client, const char** argv) override {
         uint8_t v = atoi(argv[3]);
-        char data[32];
+        char data[40];
 
         // Activacion de los motores
         digitalWrite(_out, v & 1);
@@ -91,7 +91,7 @@ public:
         Serial.println(digitalRead(_dir) ? "Activado.":"Desactivado.");
 
         snprintf(data, sizeof(data), "R %s com distance0,distance1 0\n", argv[1]);
-        client.write(data, sizeof(data));
+        client.write(data, strlen(data));
     }
 
 private:
