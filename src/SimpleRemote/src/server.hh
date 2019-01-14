@@ -21,6 +21,7 @@ public:
             break;
         case State::SoftAP:
             _server.begin(); // Activa servidor
+            _server.setNoDelay(true);
             _state = State::Listening;
             break;
         case State::Listening:
@@ -49,6 +50,7 @@ private:
     }
 
     bool addNewClient(const WiFiClient& newClient) { // Añade el nuevo cliente al registro
+        newClient.setNoDelay(true);
         for (WiFiClient& client: _clients){
             if (!client) {
                 client = newClient;

@@ -30,6 +30,7 @@ public:
                 digitalWrite(2, HIGH); // Led On <-> Asociado a AP
                 _client.connect(IPAddress(192,168,4,1), 80);
                 if (_client) // Si está conectado al servidor
+                    _client.setNoDelay(true);
                     _state = State::Connected;
             }
             break;
