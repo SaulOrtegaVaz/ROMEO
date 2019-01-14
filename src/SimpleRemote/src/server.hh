@@ -9,6 +9,10 @@ Delega la comunicacion en un protocolo.
 #include <ESP8266WiFi.h>
 #include "led.hh"
 
+#define SSID "Control"
+#define PASSWORD "12345678"
+#define PORT 80
+
 template <class Protocol>
 class ROMEOServer {
 public:
@@ -18,12 +22,12 @@ public:
         switch(_state) {
         case State::MissingAP:
             _led.on();
-            if (WiFi.softAP("Control", "12345678")) // Activa AP
+            if (WiFi.softAP(SSID, PASSWORD)) // Activa AP
                 _state = State::SoftAP;
             break;
         case State::SoftAP:
             _led.blink(50);
-            _server.begin(); // Activa servidor
+            _server.begin(PORT); // Activa servidor
             _server.setNoDelay(true);
             _state = State::Listening;
             break;
