@@ -10,5 +10,9 @@
         "xhash": "cpp",
         "xstring": "cpp",
         "xutility": "cpp"
+    },
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/paco/.platformio/penv/bin:/home/paco/.platformio/penv:/home/paco/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games",
+        "PLATFORMIO_CALLER": "vscode"
     }
 }

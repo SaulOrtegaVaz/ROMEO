@@ -16,17 +16,28 @@ ROMEODevice device("control", "M12M32");
 
 // Protocolo en servidor (control)
 struct ControlProto { // Reenvia a todos los clientes las ordenes (Relays commands to clients)
+    static void intro(WiFiClient& client, WiFiServer& server);
     static void run(WiFiClient& client, WiFiServer& server);
 };
 
 using ROMEOModule = ROMEOServer<ControlProto>;
 ROMEOModule module;
 
+void ControlProto::intro(WiFiClient& client, WiFiServer& server) {
+    char cmdline[128]; // Ignore intro
+    size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
+    cmdline[n] = '\0';
+    Serial.println(cmdline);
+}
+
 void ControlProto::run(WiFiClient& client, WiFiServer& server) {
     char cmdline[128]; // Mensaje recibido
     size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
+    cmdline[n++] = '\r';
+    cmdline[n++] = '\n';
+    cmdline[n] = '\0';
+    Serial.print(cmdline);
     module.write(cmdline, n); // Envio a todos los clientes del mensaje (Send to all)
-    module.write("\r\n", 2);
     device.runCmd(client, cmdline, n); // Activación del protocolo
 }
 

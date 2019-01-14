@@ -49,8 +49,9 @@ private:
         }
     }
 
-    bool addNewClient(const WiFiClient& newClient) { // Añade el nuevo cliente al registro
+    bool addNewClient(WiFiClient& newClient) { // Añade el nuevo cliente al registro
         newClient.setNoDelay(true);
+        Protocol::intro(newClient, _server);
         for (WiFiClient& client: _clients){
             if (!client) {
                 client = newClient;
