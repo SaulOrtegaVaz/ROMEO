@@ -18,13 +18,18 @@ ROMEODevice device("com", "D12D78");
 struct ClientProto { // Recibe los mensajes
     static void intro(WiFiClient& client) {
         char buf[] = "\r\n";
-        client.write(buf, 2)
+        client.write(buf, 2);
+        Serial.println("intro");
     }
 
     static void run(WiFiClient& client) {
         char cmdline[128]; // Mensaje recibido
         size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
+        cmdline[n++] = '\r';
+        cmdline[n++] = '\n';
         cmdline[n] = '\0';
+        Serial.println("run");
+        Serial.print(cmdline);
         device.runCmd(client, cmdline, n); // Activación del protocolo
     }
 };
@@ -34,8 +39,6 @@ ROMEOModule module;
 
 void setup() {
     Serial.begin(115200);
-    pinMode(2, OUTPUT);
-    digitalWrite(2, LOW);
 }
 
 void loop() {

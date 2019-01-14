@@ -7,24 +7,28 @@ Delega la comunicacion en un protocolo.
 */
 
 #include <ESP8266WiFi.h>
+#include "led.hh"
 
 template <class Protocol>
 class ROMEOServer {
 public:
-    ROMEOServer() : _state(State::MissingAP), _server(80) {}
+    ROMEOServer() : _state(State::MissingAP), _server(80) { pinMode(2, OUTPUT); }
 
     void run() {
         switch(_state) {
         case State::MissingAP:
+            _led.on();
             if (WiFi.softAP("Control", "12345678")) // Activa AP
                 _state = State::SoftAP;
             break;
         case State::SoftAP:
+            _led.blink(50);
             _server.begin(); // Activa servidor
             _server.setNoDelay(true);
             _state = State::Listening;
             break;
         case State::Listening:
+            _led.off();
             checkNewClient();
             runClients();
             break;
@@ -45,12 +49,16 @@ private:
 
     void runClients() { // Aplica el protocolo en todos los clientes del registro
         for (WiFiClient& client: _clients){
-            if (client && client.available()) Protocol::run(client, _server);
+            if (client && client.available()) {
+                _led.off();
+                Protocol::run(client, _server);
+            }
         }
     }
 
     bool addNewClient(WiFiClient& newClient) { // Añade el nuevo cliente al registro
         newClient.setNoDelay(true);
+        _led.on();
         Protocol::intro(newClient, _server);
         for (WiFiClient& client: _clients){
             if (!client) {
@@ -68,9 +76,10 @@ private:
         Listening,
     };
 
-    State _state;
     WiFiServer _server;
-    WiFiClient _clients[5]; // Registro de clientes del servidor
+    WiFiClient _clients[4]; // Registro de clientes del servidor
+    State _state;
+    LEDControl _led;
 };
 
 #endif

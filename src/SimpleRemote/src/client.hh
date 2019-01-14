@@ -7,29 +7,45 @@ Delega la comunicacion en un protocolo.
 */
 
 #include <ESP8266WiFi.h>
+#include "led.hh"
+
+// Para pruebas en casa
+//#define SSID "idefix"
+//#define PASSWORD "..."
+//#define IPADDR IPAddress(192,168,1,34)
+//#define PORT 8080
+
+#define SSID "Control"
+#define PASSWORD "12345678"
+#define IPADDR IPAddress(192,168,4,1)
+#define PORT 80
 
 template <class Protocol>
 class ROMEOClient {
 public:
-    ROMEOClient() : _state(State::Disconnected) {}
+    ROMEOClient() : _state(State::Disconnected) { }
+
 
     void run() {
         switch(_state) {
         case State::Disconnected:
+            _led.on();
             WiFi.mode(WIFI_STA); // Activa el modo station Wi-Fi
-            WiFi.begin("Control", "12345678"); // Se conecta a la red Wi-Fi señalada
+            WiFi.begin(SSID, PASSWORD); // Se conecta a la red Wi-Fi señalada
             _state = State::Waiting;
             break;
         case State::Waiting:
+            _led.blink(50);
             if (WiFi.status() == WL_CONNECTED) { // Si está conectado a la red Wi-Fi
                 _state = State::Associated;
             }
             break;
         case State::Associated:
+            _led.blink(150);
             if (checkAssociated()) { // Si permanece conectado a la red Wi-Fi
-                digitalWrite(2, HIGH); // Led On <-> Asociado a AP
-                _client.connect(IPAddress(192,168,4,1), 80);
+                _client.connect(IPADDR, PORT);
                 if (_client) {// Si está conectado al servidor
+                    _led.off();
                     _client.setNoDelay(true);
                     _state = State::Connected;
                     Protocol::intro(_client);
@@ -38,8 +54,8 @@ public:
             break;
         case State::Connected:
             // Si está asociado a la red Wi-Fi, si está conectado al servidor y si hay datos disponibles
-            if (checkAssociated() && checkConnected() && _client.available()) {
-                Protocol::run(_client); // Aplica protocolo
+            if (checkConnected() && _client.available()) {
+                    Protocol::run(_client); // Aplica protocolo
             }
             break;
         }
@@ -67,8 +83,9 @@ private:
         Connected,
     };
 
-    State _state;
     WiFiClient _client;
+    State _state;
+    LEDControl _led;
 };
 
 #endif
