@@ -9,12 +9,6 @@ Delega la comunicacion en un protocolo.
 #include <ESP8266WiFi.h>
 #include "led.hh"
 
-// Para pruebas en casa
-//#define SSID "idefix"
-//#define PASSWORD "..."
-//#define IPADDR IPAddress(192,168,1,34)
-//#define PORT 8080
-
 #define SSID "Control"
 #define PASSWORD "12345678"
 #define IPADDR IPAddress(192,168,4,1)
@@ -64,7 +58,6 @@ public:
 private:
     bool checkAssociated() { // Comprueba conexión a red Wi-Fi
         if (WiFi.status() == WL_CONNECTED) return true;
-        digitalWrite(2, LOW); // Led Off <-> Desconectado del AP
         _state = State::Disconnected; // Si no, vuelve a estado disconnected
         return false;
     }

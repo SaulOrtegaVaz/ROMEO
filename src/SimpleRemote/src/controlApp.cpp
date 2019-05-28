@@ -26,8 +26,10 @@ ROMEOModule module;
 void ControlProto::intro(WiFiClient& client, WiFiServer& server) {
     char cmdline[128]; // Ignore intro
     size_t n = client.readBytesUntil('\n', cmdline, sizeof(cmdline));
+    cmdline[n++] = '\r';
+    cmdline[n++] = '\n';
     cmdline[n] = '\0';
-    Serial.println(cmdline);
+    Serial.print(cmdline);
 }
 
 void ControlProto::run(WiFiClient& client, WiFiServer& server) {
@@ -36,6 +38,7 @@ void ControlProto::run(WiFiClient& client, WiFiServer& server) {
     cmdline[n++] = '\r';
     cmdline[n++] = '\n';
     cmdline[n] = '\0';
+    Serial.print("run: ");
     Serial.print(cmdline);
     module.write(cmdline, n); // Envio a todos los clientes del mensaje (Send to all)
     device.runCmd(client, cmdline, n); // Activación del protocolo

@@ -16,7 +16,7 @@ Delega la comunicacion en un protocolo.
 template <class Protocol>
 class ROMEOServer {
 public:
-    ROMEOServer() : _state(State::MissingAP), _server(80) { pinMode(2, OUTPUT); }
+    ROMEOServer() : _state(State::MissingAP), _server(80) { }
 
     void run() {
         switch(_state) {

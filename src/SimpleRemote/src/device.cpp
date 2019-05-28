@@ -33,25 +33,21 @@ public:
     }
 
     void read(WiFiClient& client, const char** argv) override {
-        unsigned lim = 30; // cm de distancia hacia el sensor para activar señal
-        char data[32];
+        unsigned long lim = 10; // cm de distancia hacia el sensor para activar señal
+        char data[64];
         uint8_t state = 0; // estado del sensor HIGH 1 o LOW 0
 
         // Obtencion de la señal del sensor
         digitalWrite(_out, HIGH); delayMicroseconds(10); digitalWrite(_out, LOW);
-        unsigned d = pulseIn(_in, HIGH) / 59L;
+        unsigned long d = pulseIn(_in, HIGH) / 59L;
 
         // Ejecucion de operaciones con la señal obtenida
-        if (d < lim){
-            state = 1;
-            snprintf(data, sizeof(data), "W %s control motor0,motor1 0\n", argv[1]);
-            client.write(data, sizeof(data));
-        }
+        if (d < lim) state = 1;
 
-        snprintf(data, sizeof(data), "Sensor: %u\n", state);
+        snprintf(data, sizeof(data), "Sensor: %u", state);
         argv[3] = data;
         notify(client, argv);
-        Serial.print(data);
+        Serial.println(data);
     }
 
 private:
@@ -70,12 +66,13 @@ public:
 
     void write(WiFiClient& client, const char** argv) override {
         uint8_t v = atoi(argv[3]);
-        char data[40];
+        char data[64];
+        const char* data_signal = argv[3];
 
         // Activacion de los motores
         digitalWrite(_out, v & 1);
 
-        snprintf(data, sizeof(data), "Motor: %d\n", digitalRead(_out));
+        snprintf(data, sizeof(data), "Motor: %d", digitalRead(_out));
         argv[3] = (const char*) data;
         notify(client, argv);
         Serial.print("Estado del motor: ");
@@ -84,14 +81,13 @@ public:
         // Sentido de giro de los motores
         digitalWrite(_dir, v >> 1);
 
-        snprintf(data, sizeof(data), "Giro: %d\n", digitalRead(_dir));
+        snprintf(data, sizeof(data), "Giro: %d", digitalRead(_dir));
         argv[3] = (const char*) data;
         notify(client, argv);
         Serial.print("Direccion del motor: ");
         Serial.println(digitalRead(_dir) ? "Activado.":"Desactivado.");
 
-        snprintf(data, sizeof(data), "R %s com distance0,distance1 0\n", argv[1]);
-        client.write(data, strlen(data));
+        argv[3] = data_signal;
     }
 
 private:
@@ -108,12 +104,6 @@ static bool is_destination_element(const char* id, const char** dest);
 void 
 ROMEODevice::runCmd(WiFiClient& client, const char** argv)// Protocolo de comunicacion
 {
-    if(argv[2] == nullptr) {
-        char er[] = "ERROR: Mensaje invalido.\n";
-        client.write(er, sizeof(er));
-        return;
-    }
-
     // Filtro para mensajes que no son mios
     if (strcmp(argv[2], _id)) return;
 
@@ -134,14 +124,15 @@ ROMEODevice::runCmd(WiFiClient& client, const char** argv)// Protocolo de comuni
 
     dispatchCommand("R", [&](Element* e, const char**argv) {
         argv[3] = e->elementID();
-        Serial.println("Read from:");
+        Serial.print("Read from: ");
         Serial.println(argv[3]);
         e->read(client, argv+1);
     });
 
+
     dispatchCommand("W", [&](Element* e, const char**argv) {
         argv[3] = e->elementID();
-        Serial.println("Write to:");
+        Serial.print("Write to: ");
         Serial.println(argv[3]);
         e->write(client, argv+1);
     });
@@ -149,7 +140,7 @@ ROMEODevice::runCmd(WiFiClient& client, const char** argv)// Protocolo de comuni
     dispatchCommand("L", [&](Element* e, const char**argv) {
         argv[3] = "none";
         argv[4] = e->elementID();
-        Serial.print("List elements:");
+        Serial.print("List elements: ");
         Serial.println(argv[4]);
         e->notify(client, argv+1);
     });
@@ -183,16 +174,28 @@ ROMEODevice::runCmd(WiFiClient& client, char* cmdline, size_t n)
     char *p;
     const char* argv[5] = { nullptr };
 
-    if (n < 2) {
-        char er[] = "ERROR: Mensaje vacio.\n";
+    // ERROR MENSAJE VACIO
+    if (n < 3) {
+        char er[] = "N dev pc none Error:Mensaje_Vacio\n";
         client.write(er, sizeof(er));
         return;
     }
-    cmdline[n] = '\0';
     
     for (uint8_t i = 0; i < 5; ++i) {
         argv[i] = strtok_r(i? nullptr: cmdline, " \t\r\n", &p);
         if (argv[i] == nullptr) break;
+    }
+
+    // ERROR MENSAJE INCORRECTO
+    if(argv[2] == nullptr) {
+        /*#ifdef DEVICE_APP
+            char er[] = "N dev error invalido 0\n";
+        #else
+            char er[] = "N control error invalido 0\n";
+        #endif*/
+        char er[] = "N dev pc none Error:Mensaje_Invalido\n";
+        client.write(er, sizeof(er));
+        return;
     }
 
     runCmd(client, argv);

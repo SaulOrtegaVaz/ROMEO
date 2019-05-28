@@ -57,4 +57,5 @@ while True:
     if i == 'quit':
         running = False
         exit()
-    nc.write( i + '\n') 
+    if len(i)>0 and i[0] in 'LRWN':
+        nc.write( i + '\n') 

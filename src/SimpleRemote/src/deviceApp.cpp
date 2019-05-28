@@ -12,7 +12,7 @@
 #include "device.hh"
 
 // Definicion de elements conectados al modulo de comunicacion
-ROMEODevice device("com", "D12D78");
+ROMEODevice device("com", "D21D87");
 
 // Protocolo en cliente (comunicacion)
 struct ClientProto { // Recibe los mensajes
@@ -28,7 +28,7 @@ struct ClientProto { // Recibe los mensajes
         cmdline[n++] = '\r';
         cmdline[n++] = '\n';
         cmdline[n] = '\0';
-        Serial.println("run");
+        Serial.print("run: ");
         Serial.print(cmdline);
         device.runCmd(client, cmdline, n); // Activación del protocolo
     }
